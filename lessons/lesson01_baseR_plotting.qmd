@@ -82,6 +82,11 @@ dev.off()
 
 ### Scatterplot
 
+::: callout-note
+**Add callout here about plotting panel versus rendering it in the
+markdown document**
+:::
+
 For some hands-on practice we are going to use `plot` to draw a scatter
 plot and obtain a graphical view of the relationship between two sets of
 continuous numeric data. From our new_metadata file we will take the
@@ -193,7 +198,7 @@ legend("topleft",
 ```
 
 ::: callout-tip
-# [Exercise 1](Aside_basic_plots_in_r-Answer_key.qmd#exercise-1)
+# Exercise 1
 
 1.  Change the color scheme in the scatterplot, such that it reflects
     the `genotype` of samples rather than `celltype`.

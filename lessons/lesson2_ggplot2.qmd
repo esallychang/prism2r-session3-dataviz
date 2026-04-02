@@ -9,7 +9,7 @@ editor_options:
     wrap: 72
 ---
 
-## What is ggplot and why are we learning it? 
+## What is ggplot and why are we learning it?
 
 **`ggplot2`** is a plotting package that provides helpful commands to
 create complex plots from data in a data frame. It provides a more
@@ -33,7 +33,7 @@ ggplot graphics are built layer by layer by adding new elements. Adding
 layers in this fashion allows for extensive flexibility and
 customization of plots.
 
-## The ggplot formula: 
+## The ggplot formula:
 
 To build a ggplot, we will use the following basic template that can be
 used for different types of plots:
@@ -55,7 +55,7 @@ ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>())
 -   By adding more statements you can add more customization to your
     plot!
 
-## Motivation: 
+## Motivation:
 
 Today we will go through creating and customizing a few typical plots so
 you can get a handle on the ggplot2() syntax. Once you are feeling
@@ -74,7 +74,7 @@ inspired by what you see in publications.
     extension](https://csdaw.github.io/ggprism/articles/web-only/ex1-dose.html)
     examples
 
-## What are our goals for today? 
+## What are our goals for today?
 
 -   Explain the syntax of ggplot2
 -   Apply ggplot2 package to visualize data
@@ -139,7 +139,7 @@ most basic information about a scatterplot, i.e. what you want to plot
 on the x and y axes. All of the other plot elements mentioned above are
 optional.
 
-### Adding the actual geometric object! 
+### Adding the data via a geometric object!
 
 The **geom (geometric) object** is the layer that specifies what kind of
 plot we want to draw. A plot **must have at least one `geom`**; there is
@@ -164,12 +164,15 @@ Now that we have the required aesthetics, let's add some extras like
 color to the plot. We can **`color` the points on the plot based on the
 genotype column** within `aes()`. You will notice that there are a
 default set of colors that will be used so we do not have to specify.
-Note that the legend has been conveniently plotted for us.
+
+Note that the legend has been conveniently plotted for us and that this
+call of the `aes` function is *inside* of `geom_point` as these are
+options specific to the mapping of the data to the geometric object.
 
 ```{r}
 #| label: add_color_column
 # Adding color to our figure based upon the genotype
-
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + geom_point(aes(color = genotype)) 
 ```
 
 Let's try to have both **celltype and genotype represented on the
@@ -180,22 +183,27 @@ shaped data point.
 ```{r}
 #| label: add_shape_column
 # Adding different shapes to our data based upon the celltype
-ggplot(new_metadata) +
-  geom_point(aes(x = age_in_days, y= samplemeans, color = genotype,
-  			shape=celltype)) 
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype)) 
 ```
 
+## Iteratively Making Improvements to a Graph
+
+This is a totally useable graph at this point, but if you are like me,
+you might immediately notice some improvements that could be made!
+
 The data points are quite small. We can adjust the **size of the data
-points** within the `geom_point()` layer, but it should **not be within
-`aes()`** since we are not mapping it to a column in the input data
-frame, instead we are just specifying a number.
+points** within the `geom_point()` layer since it applies to those
+points, but it should **not be within `aes()`** since we are not mapping
+it to a column in the input data frame, instead we are just specifying a
+number.
 
 ```{r}
 #| label: increase_size
 # Increase the size of the points
-ggplot(new_metadata) +
-  geom_point(aes(x = age_in_days, y= samplemeans, color = genotype,
-  			shape=celltype), size=2.25) 
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) 
+
 ```
 
 The labels on the x- and y-axis are also quite small and hard to read.
@@ -218,10 +226,11 @@ Let's add a layer `theme_bw()`.
 ```{r}
 #| label: add_pre_built_theme
 # Adding in a built-in theme
-ggplot(new_metadata) +
-  geom_point(aes(x = age_in_days, y= samplemeans, color = genotype,
-  			shape=celltype), size=3.0) +
-  theme_bw() 
+
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) +
+  theme_bw()
+
 ```
 
 Do the axis labels or the tick labels get any larger by changing themes?
@@ -238,11 +247,12 @@ commonly used to specify a change relative to the default.
 ```{r}
 #| label: increase_axis_titles_size
 # Increasing the size of the axes titles
-ggplot(new_metadata) +
-  geom_point(aes(x = age_in_days, y= samplemeans, color = genotype,
-  			shape=celltype), size=2.25) +
-  theme_bw() +
-  theme(axis.title = element_text(size=rel(1.5)))			
+
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) +
+  theme_bw() + 
+  theme(axis.title = element_text(size=rel(1.5)))	
+	
 ```
 
 ::: callout-note
@@ -265,7 +275,7 @@ ggplot2.
 :::
 
 ::: callout-tip
-# [**Exercise 1**](12_ggplot2-Answer_key.qmd#exercise-1)
+# **Exercise 1**
 
 1.  The current axis label text defaults to what we gave as input to
     `geom_point` (i.e the column headers). We can change this by
@@ -283,3 +293,82 @@ ggplot2.
     -   How many theme() layers can be added to a ggplot code chunk, in
         your estimation?
 :::
+
+## Saving ggplot() objects and exporting to file
+
+### Saving a ggplot() object
+
+Helpfully, you can actually assign a plot to a variable. This is super
+useful when you want to specify a base set of axes and/or a `geom` and
+then try out lots of themes or color schemes without a bunch of
+re-typing.
+
+For example, we can save the base plot with its axes as `age_vs_means` :
+
+```{r}
+age_vs_means <- ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans))
+```
+
+Then, we can use this stored object immediately and use the `+` operator
+to add points:
+
+```{r}
+age_vs_means_geom <- age_vs_means + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25)
+```
+
+See what `age_vs_means_geom` now contains by referring to by name:
+
+```{r}
+age_vs_means_geom
+```
+
+Then, you can use this to add themes or other layers iteratively without
+retyping everything that went into `age_vs_means_geom`:
+
+```{r}
+# Try adding a new theme to age_vs_means_geom. Dont forget the plus sign operator! 
+
+```
+
+### Exporting figures to file
+
+Once you've made a plot using `ggplot()` you are happy with, there are
+two ways in which figures and plots can be output to a file (rather than
+simply displaying on screen).
+
+1.  The first (and easiest) is to export directly from the RStudio
+    'Plots' panel, by clicking on `Export` when the image is plotted.
+    This will give you the option of `png` or `pdf` and selecting the
+    directory to which you wish to save it to. It will also give you
+    options to dictate the size and resolution of the output image.
+
+2.  The second option is to use R functions and have the write to file
+    hard-coded in to your script. This would allow you to run the script
+    from start to finish and automate the process (not requiring human
+    point-and-click actions to save). In R’s terminology, **output is
+    directed to a particular output device and that dictates the output
+    format that will be produced**. If we wanted to save our scatterplot
+    to a pdf file format we can use a function called `ggsave` within
+    `ggplot2` to help us.
+
+```{r}
+#| label: ggsave_example
+#| eval: false
+# Create a plot
+age_vs_means + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25)
+
+# Use ggsave to save the plot
+ggsave("scatterplot.pdf")
+```
+
+You can specify the file format you would like it to print to with the
+`device` argument, and modify the file path to save this image somewhere
+else. However, `ggsave` will try to guess your preferred format from the
+extension that you provide in your file name.
+
+Check out `ggsave()` to look at other aspects of the saved plot you can
+modify!
+
+## Consistent formatting using custom functions
