@@ -9,6 +9,8 @@ editor_options:
     wrap: 72
 ---
 
+# Fundamentals of ggplot
+
 ## What is ggplot and why are we learning it?
 
 **`ggplot2`** is a plotting package that provides helpful commands to
@@ -294,6 +296,13 @@ ggplot2.
         your estimation?
 :::
 
+::: callout-note
+You can install a
+[package](https://r-graph-gallery.com/package/ggthemes.html) called
+`ggthemes()` to get access to a variety of themes, such as those used by
+the political blog 538 or the Wall Street Journal!
+:::
+
 ## Saving ggplot() objects and exporting to file
 
 ### Saving a ggplot() object
@@ -372,3 +381,84 @@ Check out `ggsave()` to look at other aspects of the saved plot you can
 modify!
 
 ## Consistent formatting using custom functions
+
+When publishing or ensuring consistent formatting across a lab group, it
+can be helpful to ensure all plots have similar formatting. To do this
+we can create a custom function with our preferences for the theme.
+**This is also a friendly intro to creating your own functions.**
+
+As a reminder from Session 1:
+
+``` r
+# DO NOT RUN
+name_of_function <- function(arguments) {
+    statements or code that does something
+}
+```
+
+Now, let’s suppose we always wanted our theme to include the following
+for a particular set of graphs:
+
+``` r
+# DO NOT RUN
+# Themes we will like to include. Check out how we are building multiple themes on top of one another. 
+theme_bw() +
+theme(axis.title=element_text(size=rel(1.5))) +
+theme(plot.title=element_text(size=rel(1.5), hjust=0.5))
+```
+
+If there is nothing that we want to change when we run this, then we do
+not need to specify any arguments. Creating the function is simple; we
+can just put the code inside the `{}` of an otherwise empty function
+called `personal_theme()`:
+
+```{r}
+# Create personal theme function for figures
+# Look, there is now a new part of our environment called function containing this function!
+personal_theme <- function(){
+  theme_bw() +
+  theme(axis.title=element_text(size=rel(1.5))) +
+  theme(plot.title=element_text(size=rel(1.5), hjust=0.5))
+}
+```
+
+Now to run our personal theme with any plot, we can use this function in
+place of the lines of `theme()` code:
+
+```{r}
+# Apply personal theme to figure
+ggplot(new_metadata) +
+  geom_point(aes(x=age_in_days, y=samplemeans, color=genotype, shape=celltype), size=rel(3.0)) +
+  xlab("Age (days)") +
+  ylab("Mean expression") +
+  ggtitle("Expression with Age") +
+  personal_theme()
+```
+
+::: callout-note
+## Exercise 2
+
+Create another custom function called `linedraw_theme()` that applies
+the `linedraw` theme to a plot and changes the legend position to the
+top of the plot.
+
+Then, apply it to `age_vs_means_geom` (or another plot you've created)
+to test whether it works!
+:::
+
+```{r}
+# Write your custom theme function here 
+```
+
+```{r}
+# Apply it to a plot here 
+```
+
+## Word of Warning
+
+Saving ggplot() objects is great, and saving commonly used combinations
+of parameters in functions is super useful, but don't forget to save the
+code behind those plots and functions in an actual Markdown document or
+R script as you work! **For example, if I didn't actually save the code
+behind `personal_theme()` , it would NOT be saved anywhere outside of
+this project and I couldn't share it with anyone.**
