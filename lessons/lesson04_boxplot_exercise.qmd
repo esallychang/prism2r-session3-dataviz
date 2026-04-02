@@ -1,82 +1,97 @@
 ---
 title: "Boxplot visualization"
-description: |
-  This lesson introduces participants to creating and customizing boxplots using the ggplot2 package. Participants learn how to generate boxplots, adjust factor ordering, modify visual themes and apply manual color scales. Through hands‑on exercises, participants practice tweaking boxplot components and enhancing plot aesthetics.
-author:
-  - Mary Piper
-  - Meeta Mistry
-  - Radhika Khetani
-  - Jihe Liu
-  - Will Gammerdinger
-  - Noor Sohail
-date: "2025-05-30"
-categories: 
-  - R Programming
-  - Data visualization
-keywords:
-  - R
-  - ggplot2
-  - boxplots
-  - factor
+author: "E. Sally Chang"
+date: "2026-04-02"
 license: "CC-BY-4.0"
 editor_options: 
   markdown: 
     wrap: 72
 ---
 
-```{r}
-#| label: load_libraries_data
-#| echo: false
-# Load the ggplot2 package
-library(ggplot2)
+## Learning Objectives
 
-# Load new_metadata
-load("data/new_metadata.RData")
-```
-
-Approximate time: 60 minutes
-
-## Learning Objectives 
-
-- Generate the box plot using ggplot2
+-   Generate a box plot using ggplot2
+-   Customize the look of the boxplot
+-   Add additional information to a boxplot to help viewer interpret the
+    figure
 
 ## Generating a Boxplot with ggplot2
 
-A boxplot provides a graphical view of the distribution of data based on a five number summary: 
+A boxplot provides a graphical view of the distribution of data based on
+a five number summary:
 
-* The top and bottom of the box represent the (1) first and (2) third quartiles (25th and 75th percentiles, respectively). 
-* The line inside the box represents the (3) median (50th percentile). 
-* The whiskers extending above and below the box represent the (4) maximum, and (5) minimum of a data set.
-* The whiskers of the plot reach the minimum and maximum values that are not outliers. 
+-   The top and bottom of the box represent the (1) first and (2) third
+    quartiles (25th and 75th percentiles, respectively).
+-   The line inside the box represents the (3) median (50th percentile).
+-   The whiskers extending above and below the box represent the (4)
+    maximum, and (5) minimum of a data set.
+-   The whiskers of the plot reach the minimum and maximum values that
+    are not outliers.
 
-::: {.callout-note}
-In this case, **outliers** are determined using the interquartile range (IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR below Q1 or above Q3 are considered outliers and are represented as points above or below the whiskers. 
+::: callout-note
+In this case, **outliers** are determined using the interquartile range
+(IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR
+below Q1 or above Q3 are considered outliers and are represented as
+points above or below the whiskers.
 :::
 
 # Outline of the Boxplot
 
-::: {.callout-tip}
+## Adding points to the Boxplot
+
+Introduce geom_jitter() to show the actual points
+
+Adding categorical variables to a boxplot():
+
+Both using colors
+
+And by faceting
+
+Changing the order of groups in a boxplot
+
+Annotating box plots:
+
+Adding labels to ggplot() boxplots - what if we wanted to know the names
+of the genes?
+
+Adding ggplot boxplots summary stats using custom functions
+
+Highlighting the mean value in a boxplot etc.
+
+Extending with ggpubr():
+
+-   Adding brackets and p-values to R boxplots
+
+Alternatives to boxplot: Violin plots, rain cloud plots
+
+::: callout-tip
 # [**Exercise 1**](14_boxplot_exercise-Answer_key.qmd#exercise-1)
 
-Generate a boxplot using the data in the `new_metadata` dataframe. Create a ggplot2 code chunk with the following instructions:
+Generate a boxplot using the data in the `new_metadata` dataframe.
+Create a ggplot2 code chunk with the following instructions:
 
-1. Use the `geom_boxplot()` layer to plot the differences in sample means between the Wt and KO genotypes.
+1.  Use the `geom_boxplot()` layer to plot the differences in sample
+    means between the Wt and KO genotypes.
 
-2. Use the `fill` *aesthetic* to look at differences in sample means between the celltypes within each genotype.
+2.  Use the `fill` *aesthetic* to look at differences in sample means
+    between the celltypes within each genotype.
 
-3. Add a title to your plot.
+3.  Add a title to your plot.
 
-4. Add labels, "Genotype" for the x-axis and "Mean expression" for the y-axis.
+4.  Add labels, "Genotype" for the x-axis and "Mean expression" for the
+    y-axis.
 
-5. Make the following `theme()` changes:
+5.  Make the following `theme()` changes:
 
-	* Use the `theme_bw()` function to make the background white.
-	* Change the size of your axes labels to 1.25x larger than the default.
-	* Change the size of your plot title to 1.5x larger than default.
-	* Center the plot title.
+    -   Use the `theme_bw()` function to make the background white.
+    -   Change the size of your axes labels to 1.25x larger than the
+        default.
+    -   Change the size of your plot title to 1.5x larger than default.
+    -   Center the plot title.
 :::
 
-**After running the above code the boxplot should look something like that provided below.**
+**After running the above code the boxplot should look something like
+that provided below.**
 
 ```{r}
 #| label: boxplot_example
@@ -95,20 +110,25 @@ ggplot(new_metadata) +
 
 # Changing the order of genotype on the Boxplot
 
-::: {.callout-tip}
+::: callout-tip
 # [**Exercise 2**](14_boxplot_exercise-Answer_key.qmd#exercise-2)
 
-Let's say you wanted to have the "Wt" boxplots displayed first on the left side, and "KO" on the right. How might you go about doing this?
+Let's say you wanted to have the "Wt" boxplots displayed first on the
+left side, and "KO" on the right. How might you go about doing this?
 
-To do this, your first question should be - *How does ggplot2 determine what to place where on the X-axis?*
+To do this, your first question should be - *How does ggplot2 determine
+what to place where on the X-axis?*
 
-- The order of the genotype on the X axis is in alphabetical order. 
-- To change it, you need to make sure that the genotype column is a factor
-- And, the factor levels for that column are in the order you want on the x-axis
+-   The order of the genotype on the X axis is in alphabetical order.
+-   To change it, you need to make sure that the genotype column is a
+    factor
+-   And, the factor levels for that column are in the order you want on
+    the x-axis
 
-1. Factor the `new_metadata$genotype` column without creating any extra variables/objects and change the levels to `c("Wt", "KO")`
+1.  Factor the `new_metadata$genotype` column without creating any extra
+    variables/objects and change the levels to `c("Wt", "KO")`
 
-2. Re-run the boxplot code chunk you created for the exercise above.
+2.  Re-run the boxplot code chunk you created for the exercise above.
 :::
 
 ```{r}
@@ -131,33 +151,50 @@ ggplot(new_metadata) +
 
 # Changing default colors
 
-::: {.callout-tip}
+::: callout-tip
 # [**Exercise 3**](14_boxplot_exercise-Answer_key.qmd#exercise-3)
 
 You can color the boxplot differently by using some specific layers:
 
-1. Add a new layer `scale_color_manual(values=c("purple","orange"))`. 
-	
-  * Do you observe a change?
+1.  Add a new layer `scale_color_manual(values=c("purple","orange"))`.
 
-2. Replace `scale_color_manual(values=c("purple","orange"))` with `scale_fill_manual(values=c("purple","orange"))`.
-	
-  * Do you observe a change?
-  * In the scatterplot we drew in class, add a new layer `scale_color_manual(values=c("purple","orange"))`.
-  * Do you observe a difference?
-  * What do you think is the difference between `scale_color_manual()` and `scale_fill_manual()`?
+-   Do you observe a change?
 
-3. Back in your boxplot code, change the colors in the `scale_fill_manual()` layer to be your 2 favorite colors.
-	
-  * Are there any colors that you tried that did not work?
+2.  Replace `scale_color_manual(values=c("purple","orange"))` with
+    `scale_fill_manual(values=c("purple","orange"))`.
+
+-   Do you observe a change?
+-   In the scatterplot we drew in class, add a new layer
+    `scale_color_manual(values=c("purple","orange"))`.
+-   Do you observe a difference?
+-   What do you think is the difference between `scale_color_manual()`
+    and `scale_fill_manual()`?
+
+3.  Back in your boxplot code, change the colors in the
+    `scale_fill_manual()` layer to be your 2 favorite colors.
+
+-   Are there any colors that you tried that did not work?
 :::
 
-We have [a separate lesson about using color palettes from the package RColorBrewer](Aside_ggplot2.qmd#customizing-data-point-colors), if you are interested.
+We have [a separate lesson about using color palettes from the package
+RColorBrewer](Aside_ggplot2.qmd#customizing-data-point-colors), if you
+are interested.
 
-You are not restricted to using colors by writing them out as character vectors. You have the choice of a lot of colors in R, and you can do so by using their *hexadecimal code*. For example, "#FF0000" would be red and "#00FF00" would be green similarly, "#FFFFFF" would be white and "#000000" would be black. [Click here for more information about color palettes in R](http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/#hexadecimal-color-code-chart) or you can use this [helpful cheatsheet](https://www.stat.auckland.ac.nz/~ihaka/downloads/R-colours-a4.pdf) that lists many popular colors in R.
+You are not restricted to using colors by writing them out as character
+vectors. You have the choice of a lot of colors in R, and you can do so
+by using their *hexadecimal code*. For example, "#FF0000" would be red
+and "#00FF00" would be green similarly, "#FFFFFF" would be white and
+"#000000" would be black. [Click here for more information about color
+palettes in
+R](http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/#hexadecimal-color-code-chart)
+or you can use this [helpful
+cheatsheet](https://www.stat.auckland.ac.nz/~ihaka/downloads/R-colours-a4.pdf)
+that lists many popular colors in R.
 
-::: {.callout-tip}
+::: callout-tip
 # [**Exercise 4**](14_boxplot_exercise-Answer_key.qmd#exercise-4)
 
-Find the hexadecimal code for your 2 favorite colors (from the final exercise) and replace the color names with the hexadecimal codes within the ggplot2 code chunk.
+Find the hexadecimal code for your 2 favorite colors (from the final
+exercise) and replace the color names with the hexadecimal codes within
+the ggplot2 code chunk.
 :::
