@@ -9,7 +9,7 @@ editor_options:
     wrap: 72
 ---
 
-## About our Data Set 
+## About our Data Set
 
 ### **The dataset**
 

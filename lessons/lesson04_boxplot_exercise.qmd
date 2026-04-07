@@ -15,30 +15,6 @@ editor_options:
 -   Add additional information to a boxplot to help viewer interpret the
     figure
 
-## Generating a Boxplot with ggplot2
-
-A boxplot provides a graphical view of the distribution of data based on
-a five number summary:
-
--   The top and bottom of the box represent the (1) first and (2) third
-    quartiles (25th and 75th percentiles, respectively).
--   The line inside the box represents the (3) median (50th percentile).
--   The whiskers extending above and below the box represent the (4)
-    maximum, and (5) minimum of a data set.
--   The whiskers of the plot reach the minimum and maximum values that
-    are not outliers.
-
-::: callout-note
-In this case, **outliers** are determined using the interquartile range
-(IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR
-below Q1 or above Q3 are considered outliers and are represented as
-points above or below the whiskers.
-:::
-
-# Outline of the Boxplot
-
-## Adding points to the Boxplot
-
 Introduce geom_jitter() to show the actual points
 
 Adding categorical variables to a boxplot():
@@ -64,48 +40,84 @@ Extending with ggpubr():
 
 Alternatives to boxplot: Violin plots, rain cloud plots
 
-::: callout-tip
-# [**Exercise 1**](14_boxplot_exercise-Answer_key.qmd#exercise-1)
+# What is a boxplot? 
+
+A boxplot provides a graphical view of the distribution of data based on
+a five number summary:
+
+-   The top and bottom of the box represent the (1) first and (2) third
+    quartiles (25th and 75th percentiles, respectively).
+-   The line inside the box represents the (3) median (50th percentile).
+-   The whiskers extending above and below the box represent the (4)
+    maximum, and (5) minimum of a data set.
+-   The whiskers of the plot reach the minimum and maximum values that
+    are not outliers.
+
+::: callout-note
+In this case, **outliers** are determined using the interquartile range
+(IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR
+below Q1 or above Q3 are considered outliers and are represented as
+points above or below the whiskers.
+:::
+
+# Putting together a boxplot in ggplot()
+
+In this exercise you will build on what you learned about ggplot()
+syntax in the previous scatterplot exercises to create a custom boxplot.
+I promise you can do this with the skills you have now!
+
+::: callout-note
+**Exercise 1:**
 
 Generate a boxplot using the data in the `new_metadata` dataframe.
-Create a ggplot2 code chunk with the following instructions:
+Create a ggplot2 code chunk with the following instructions, building
+iteratively to test your code in the code blocks below:
 
-1.  Use the `geom_boxplot()` layer to plot the differences in sample
-    means between the Wt and KO genotypes.
+1.  Use the `ggplot()` and `geom_boxplot()` layers to plot the
+    differences in sample means between the Wt and KO genotypes. I've
+    started this for you in the first code cell below!
 
-2.  Use the `fill` *aesthetic* to look at differences in sample means
-    between the celltypes within each genotype.
+2.  Use the `fill` *aesthetic* inside our geom to look at differences in
+    sample means between the celltypes within each genotype.
 
-3.  Add a title to your plot.
+3.  Add a title to your plot using `ggtitle()`
 
-4.  Add labels, "Genotype" for the x-axis and "Mean expression" for the
+4.  Add labels, “Genotype” for the x-axis and “Mean expression” for the
     y-axis.
 
 5.  Make the following `theme()` changes:
 
     -   Use the `theme_bw()` function to make the background white.
+
     -   Change the size of your axes labels to 1.25x larger than the
         default.
+
     -   Change the size of your plot title to 1.5x larger than default.
+
     -   Center the plot title.
 :::
 
-**After running the above code the boxplot should look something like
-that provided below.**
+```{r}
+# Step 1: Create a boxplot where the x-axis is the genotype and the y-axis are the samplemeans
+ggplot(data = _______, aes(x = ______, y = _______)) + geom_boxplot()
+```
 
 ```{r}
-#| label: boxplot_example
-#| echo: false
-# Boxplot example
-ggplot(new_metadata) +
-  geom_boxplot(aes(x = genotype, y = samplemeans, fill = celltype)) +
-  ggtitle("Genotype differences in Average Gene Expression") +
-  xlab("Genotype") +
-  ylab("Mean Expression") +
-  theme_bw() +
-  theme(axis.title = element_text(size = rel(1.25))) +
-  theme(plot.title = element_text(size = rel(1.5))) +
-  theme(plot.title = element_text(hjust = 0.5))
+# Step 2: Use fill aesthetic to color by celltype
+
+```
+
+```{r}
+# Step 3:  Add a title to your plot using ggtitle()
+
+```
+
+```{r}
+# Step 4: Add labels, “Genotype” for the x-axis and “Mean expression” for the y-axis.
+```
+
+```{r}
+# Step 5: Make the suggested theme() changes
 ```
 
 # Changing the order of genotype on the Boxplot
