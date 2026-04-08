@@ -17,13 +17,7 @@ editor_options:
 
 Introduce geom_jitter() to show the actual points
 
-Adding categorical variables to a boxplot():
-
-Both using colors
-
 And by faceting
-
-Changing the order of groups in a boxplot
 
 Annotating box plots:
 
@@ -85,7 +79,8 @@ iteratively to test your code in the code blocks below:
 4.  Add labels, “Genotype” for the x-axis and “Mean expression” for the
     y-axis.
 
-5.  Make the following `theme()` changes:
+5.  Make the following `theme()` changes. Hint: You may need to use help
+    functions to look at theme() options.
 
     -   Use the `theme_bw()` function to make the background white.
 
@@ -120,53 +115,45 @@ ggplot(data = _______, aes(x = ______, y = _______)) + geom_boxplot()
 # Step 5: Make the suggested theme() changes
 ```
 
-# Changing the order of genotype on the Boxplot
+# Changing the order of boxes in your boxplot()
 
-::: callout-tip
-# [**Exercise 2**](14_boxplot_exercise-Answer_key.qmd#exercise-2)
-
-Let's say you wanted to have the "Wt" boxplots displayed first on the
-left side, and "KO" on the right. How might you go about doing this?
+Let’s say you wanted to have the “Wt” boxplots displayed first on the
+left side, and “KO” on the right. How might you go about doing this?
 
 To do this, your first question should be - *How does ggplot2 determine
 what to place where on the X-axis?*
 
 -   The order of the genotype on the X axis is in alphabetical order.
+
 -   To change it, you need to make sure that the genotype column is a
     factor
--   And, the factor levels for that column are in the order you want on
-    the x-axis
 
-1.  Factor the `new_metadata$genotype` column without creating any extra
-    variables/objects and change the levels to `c("Wt", "KO")`
+-   And, the levels listed in the factor for that column are in the
+    order you want on the x-axis
 
-2.  Re-run the boxplot code chunk you created for the exercise above.
-:::
+Here is what it looks like to convert the genotype column of the
+new_metadata
 
 ```{r}
-#| label: factored_genotype_boxplot
-#| echo: false
 # Factor genotype
 new_metadata$genotype <- factor(new_metadata$genotype, c("Wt", "KO"))
+```
 
-# Create new boxplot
-ggplot(new_metadata) +
-  geom_boxplot(aes(x = genotype, y = samplemeans, fill = celltype)) +
-  ggtitle("Genotype differences in Average Gene Expression") +
-  xlab("Genotype") +
-  ylab("Mean Expression") +
-  theme_bw() +
-  theme(axis.title = element_text(size = rel(1.25))) +
-  theme(plot.title = element_text(size = rel(1.5))) +
-  theme(plot.title = element_text(hjust = 0.5))
+Now re-run the final code for your boxplot above to see if that changed!
+We can also use this as an opportunity to save our boxplot as an R
+object to modify in future steps:
+
+```{r}
+base_boxplot <- YOUR CODE FROM ABOVE
 ```
 
 # Changing default colors
 
 ::: callout-tip
-# [**Exercise 3**](14_boxplot_exercise-Answer_key.qmd#exercise-3)
+# **Exercise 3**
 
-You can color the boxplot differently by using some specific layers:
+You can color the `base_boxplot` differently by using some specific
+layers:
 
 1.  Add a new layer `scale_color_manual(values=c("purple","orange"))`.
 
@@ -176,21 +163,22 @@ You can color the boxplot differently by using some specific layers:
     `scale_fill_manual(values=c("purple","orange"))`.
 
 -   Do you observe a change?
--   In the scatterplot we drew in class, add a new layer
-    `scale_color_manual(values=c("purple","orange"))`.
--   Do you observe a difference?
--   What do you think is the difference between `scale_color_manual()`
-    and `scale_fill_manual()`?
-
-3.  Back in your boxplot code, change the colors in the
-    `scale_fill_manual()` layer to be your 2 favorite colors.
-
--   Are there any colors that you tried that did not work?
 :::
 
-We have [a separate lesson about using color palettes from the package
-RColorBrewer](Aside_ggplot2.qmd#customizing-data-point-colors), if you
-are interested.
+::: callout-note
+# **Exercise 4**
+
+-   In the scatterplot we drew in class, add a new layer
+    `scale_color_manual(values=c("purple","orange"))`.
+
+-   Do you observe a difference?
+
+-   What do you think is the difference between `scale_color_manual()`
+    and `scale_fill_manual()`?
+:::
+
+If you are interested in learning more, there are whole lessons just on
+color customization in
 
 You are not restricted to using colors by writing them out as character
 vectors. You have the choice of a lot of colors in R, and you can do so
@@ -203,10 +191,58 @@ or you can use this [helpful
 cheatsheet](https://www.stat.auckland.ac.nz/~ihaka/downloads/R-colours-a4.pdf)
 that lists many popular colors in R.
 
-::: callout-tip
-# [**Exercise 4**](14_boxplot_exercise-Answer_key.qmd#exercise-4)
+# **Adding additional geoms to visualize raw data**
 
-Find the hexadecimal code for your 2 favorite colors (from the final
-exercise) and replace the color names with the hexadecimal codes within
-the ggplot2 code chunk.
-:::
+## Using our small dataset: 
+
+One of the most powerful aspects of **`ggplot`** is the way we can add
+components to a plot in successive layers. While boxplots can be very
+useful for summarizing data, it is often helpful to show the raw data as
+well. With **`ggplot`**, we can easily add another `geom_` to our plot
+to show the raw data.
+
+Let’s add `geom_point()` to visualize the raw data in the code cell
+below.
+
+```{r}
+base_boxplot + geom_point()
+```
+
+## Using a larger test dataset
+
+So, that wasn't super exciting given how small our input data set was.
+Let's use a package containing a bigger experimental dataset:
+
+The `ratdat` package contains data from the [Portal
+Project](https://github.com/weecology/PortalData), which is a long-term
+dataset from Portal, Arizona, in the Chihuahuan desert.
+
+We will be using a dataset called `complete_old`, which contains older
+years of survey data. Let’s try to learn a little bit about the data. We
+can use a `?` in front of the name of the dataset, which will bring up
+the help page for the data.
+
+### R
+
+```         
+?complete_old
+```
+
+Here we can read descriptions of each variable in our data.
+
+To actually take a look at the data, we can use the `View()` function to
+open an interactive viewer, which behaves like a simplified version of a
+spreadsheet program. It’s a handy function, but somewhat limited when
+trying to view large datasets.
+
+### R
+
+```         
+View(complete_old)
+```
+
+If you hover over the tab for the interactive `View()`, you can click
+the “x” that appears, which will close the tab.
+
+We can find out more about the dataset by using the `str()` function to
+examine the **str**ucture of the data.
