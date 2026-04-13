@@ -450,3 +450,21 @@ myplot +
     "rodent_size_plots.jpg". Hint: You will need to save the scatterplot
     as an R object first.
 :::
+
+::: callout-note
+## Challenge 6: Your Own Plot!
+
+Try making your own plot! You can run `str(complete_old)` or
+`?complete_old` to explore variables you might use in your new plot.
+Pick some that might be of the same type (or involve the same
+visualizations) as your
+
+Here are a couple ideas to get you started:
+
+-   make a histogram of one of the numeric variables
+
+-   try plotting continuous variables using a line graph
+
+If you feel bold, copy and paste or upload your plot into the shared
+class document so we can all check it out.
+:::

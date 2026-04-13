@@ -1,0 +1,36 @@
+---
+title: "Extending ggplot"
+author:
+  - E. Sally Chang
+date: "2026-04-01"
+license: "CC-BY-4.0"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Extending ggplot() using other packages 
+
+## Integrating statistical tests using ggpubr()
+
+The strength of `ggplot2` is also its weakness. Using a layered approach
+means that it can often take quite a bit of code to reach a publishable
+state, even for routine plots. For new users, it is additionally
+difficult to remember what elements are needed to adjust various plot
+features, as there are hundreds of functions in the `ggplot2` package.
+`ggpubr` is a package designed to address some of these problems. [The
+‘ggpubr’ package provides some easy-to-use functions for creating and
+customizing ‘ggplot2’- based publication ready
+plots](https://rpkgs.datanovia.com/ggpubr/).
+
+`ggpubr` allows us to easily incorporate additional information into our
+plots (e.g., mean, individual case information, etc.). Where this
+package really shines is its ability to easily include the results of
+common statistical tests.
+
+Here, I will give you a taste of how this package is useful for
+displaying the results of common statistical tests such as those used to
+compare means between groups. **We will cover this in much more detail
+in Session 4 on Statistical Analyses!**
+
+## ggprism()
