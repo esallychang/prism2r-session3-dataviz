@@ -462,3 +462,129 @@ code behind those plots and functions in an actual Markdown document or
 R script as you work! **For example, if I didn't actually save the code
 behind `personal_theme()` , it would NOT be saved anywhere outside of
 this project and I couldn't share it with anyone.**
+
+# Brief Boxplot Example
+
+A boxplot provides a graphical view of the distribution of data based on
+a five number summary:
+
+-   The top and bottom of the box represent the (1) first and (2) third
+    quartiles (25th and 75th percentiles, respectively).
+-   The line inside the box represents the (3) median (50th percentile).
+-   The whiskers extending above and below the box represent the (4)
+    maximum, and (5) minimum of a data set.
+-   The whiskers of the plot reach the minimum and maximum values that
+    are not outliers.
+
+In this case, **outliers** are determined using the interquartile range
+(IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR
+below Q1 or above Q3 are considered outliers and are represented as
+points above or below the whiskers.
+
+### Putting together a boxplot in ggplot()
+
+In this exercise you will build on what you learned about ggplot()
+syntax in the previous scatterplot exercises to create a custom boxplot.
+I promise you can do this with the skills you have now!
+
+**Exercise 1:**
+
+Generate a boxplot using the data in the `new_metadata` dataframe.
+Create a ggplot2 code chunk with the following instructions, building
+iteratively to test your code in the code blocks below:
+
+1.  Use the `ggplot()` and `geom_boxplot()` layers to plot the
+    differences in sample means between the Wt and KO genotypes. I've
+    started this for you in the first code cell below!
+
+2.  Use the `fill` *aesthetic* inside our geom to look at differences in
+    sample means between the celltypes within each genotype.
+
+3.  Add a title to your plot using `ggtitle()`
+
+4.  Add labels, “Genotype” for the x-axis and “Mean expression” for the
+    y-axis.
+
+5.  Make the following `theme()` changes. Hint: You may need to use help
+    functions to look at theme() options.
+
+    -   Use the `theme_bw()` function to make the background white.
+
+    -   Change the size of your axes labels to 1.25x larger than the
+        default.
+
+    -   Change the size of your plot title to 1.5x larger than default.
+
+    -   Center the plot title.
+
+```{r}
+# Step 1: Create a boxplot where the x-axis is the genotype and the y-axis are the samplemeans
+ggplot(data = _______, aes(x = ______, y = _______)) + geom_boxplot()
+```
+
+```{r}
+# Step 2: Use fill aesthetic to color by celltype
+
+```
+
+```{r}
+# Step 3:  Add a title to your plot using ggtitle()
+
+```
+
+```{r}
+# Step 4: Add labels, “Genotype” for the x-axis and “Mean expression” for the y-axis.
+```
+
+```{r}
+# Step 5: Make the suggested theme() changes
+```
+
+### Changing the order of boxes in your boxplot()
+
+Let’s say you wanted to have the “Wt” boxplots displayed first on the
+left side, and “KO” on the right. How might you go about doing this?
+
+To do this, your first question should be - *How does ggplot2 determine
+what to place where on the X-axis?*
+
+-   The order of the genotype on the X axis is in alphabetical order.
+
+-   To change it, you need to make sure that the genotype column is a
+    factor
+
+-   And, the levels listed in the factor for that column are in the
+    order you want on the x-axis
+
+Here is what it looks like to convert the genotype column of the
+new_metadata
+
+```{r}
+# Factor genotype
+new_metadata$genotype <- factor(new_metadata$genotype, c("Wt", "KO"))
+```
+
+Now re-run the final code for your boxplot above to see if that changed!
+We can also use this as an opportunity to save our boxplot as an R
+object to modify in future steps:
+
+```{r}
+base_boxplot <- YOUR CODE FROM ABOVE
+```
+
+### **Adding additional geoms to visualize raw data**
+
+One of the most powerful aspects of **`ggplot`** is the way we can add
+components to a plot in successive layers. While boxplots can be very
+useful for summarizing data, it is often helpful to show the raw data as
+well. With **`ggplot`**, we can easily add another `geom_` to our plot
+to show the raw data.
+
+Let’s add `geom_point()` to visualize the raw data in the code cell
+below.
+
+```{r}
+base_boxplot + geom_point()
+```
+
+# 
