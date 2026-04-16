@@ -1,0 +1,13 @@
+"","genotype","celltype","replicate","samplemeans","age_in_days"
+"sample1","Wt","typeA",1,10.2661021012526,40
+"sample2","Wt","typeA",2,10.8497590568301,32
+"sample3","Wt","typeA",3,9.4525167577281,38
+"sample4","KO","typeA",1,15.8338719035151,35
+"sample5","KO","typeA",2,15.5901844004991,41
+"sample6","KO","typeA",3,15.5515290725027,32
+"sample7","Wt","typeB",1,15.5222187876243,34
+"sample8","Wt","typeB",2,13.8082805694643,26
+"sample9","Wt","typeB",3,14.1083992181997,28
+"sample10","KO","typeB",1,10.7432920099747,28
+"sample11","KO","typeB",2,10.7783183243072,30
+"sample12","KO","typeB",3,9.75473298246505,32

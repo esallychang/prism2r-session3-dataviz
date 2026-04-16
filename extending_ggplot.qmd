@@ -9,7 +9,7 @@ editor_options:
     wrap: 72
 ---
 
-# Extending ggplot() using other packages 
+# Extending ggplot() using other packages
 
 ## Integrating statistical tests using ggpubr()
 
@@ -26,11 +26,275 @@ plots](https://rpkgs.datanovia.com/ggpubr/).
 `ggpubr` allows us to easily incorporate additional information into our
 plots (e.g., mean, individual case information, etc.). Where this
 package really shines is its ability to easily include the results of
-common statistical tests.
+common statistical tests. **As we saw, base R has functions for
+calculating statistics, but then you would need to manually add them to
+your plot, which is way more annoying.**
 
 Here, I will give you a taste of how this package is useful for
 displaying the results of common statistical tests such as those used to
 compare means between groups. **We will cover this in much more detail
 in Session 4 on Statistical Analyses!**
 
-## ggprism()
+### Quick ANOVA
+
+Let's look at `myplot` again - what kind of statistical test are we
+going to run to compare the means of the plot types?
+
+```{r}
+#| warning: false
+myplot_cleaned <- myplot +
+  theme_bw() +
+  theme(axis.title = element_text(size = 14), 
+        legend.position = "none") +
+  labs(title = "Rodent size by plot type",
+       x = "Plot type",
+       y = "Hindfoot length (mm)")
+
+myplot_cleaned
+```
+
+Let's see if patient age significantly differed between the plot types
+using an Analysis of Variance test (ANOVA) - for now, we will assume our
+data meets the assumptions of this test. In the future, we will be using
+R functions to check whether this is indeed the case!
+
+The main function in `ggpubr` to compare means between two or more
+groups is
+[`compare_means()`](https://rpkgs.datanovia.com/ggpubr/reference/compare_means.html),
+which contains functionalities of t-test, ANOVA, and other options for
+comparing means.
+
+Let's try it out for our data:
+
+```{r}
+compare_means(hindfoot_length~plot_type,complete_old,method="anova")
+```
+
+Notice, this is not nearly as descriptive as using `aov()` (mentioned
+briefly in Session 2 and covered in more detail) and this can only
+perform a one-way ANOVA. However, it is a convenient function and plays
+nicely with `ggpubr` graphing options.
+
+While an ANOVA or Kruskal-Wallis can tell us there are significant
+differences between our groups, pairwise testing can then tell us which
+groups are different. With `compare_means()` we can use a T-test or
+Wilcoxon Rank Sum as a post-hoc for pairwise comparisons.
+
+```{r}
+pairwise <-compare_means(hindfoot_length~plot_type,complete_old)
+pairwise
+```
+
+### **Integrate these results into our visualizations**
+
+If we are just interested in quickly adding the p-value of our ANOVA to
+`myplot`, we can use `stat_compare_means()`. You do not need to run
+`compare_means()` prior to `stat_compare_means()`. Look how we can
+quickly add the overall result to our existing plot!
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova")
+```
+
+However, if we want to include multiple comparisons and report p-values
+adjusted for multiple comparisons, we can add an additional layer from
+`stat_pwc` (PWC = pairwise comaparisons):
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova") +  stat_pwc( method = "wilcox_test", label = "p.adj.format")
+```
+
+This is a little chaotic, so we can try a few different things to make
+it less-so:
+
+1.  **Remove any non-significant tests:**
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova") +  stat_pwc( method = "wilcox_test", label = "p.adj.format", hide.ns = TRUE)
+```
+
+Well, that didn't do much since they are all significant!
+
+2.  **Select which comparisons to keep and adding them "manually":**
+
+-   First, create a list of vectors of comparisons you actually want to
+    display (it will be helpful to look at the `pairwise` object). For
+    example, Control vs. Spectab exclosure and Control vs. Rodent
+    Exclosure:
+
+    ```{r}
+    my_comparisons <- list( c("Control", "Spectab exclosure"), c("Control", "Rodent Exclosure"))
+    ```
+
+-   Second, apply this list using another layer of
+    `stat_compare_means()` , using the same test we used for calculating
+    the comparisons above:
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova", label.y = 10) +  stat_compare_means(comparisons = my_comparisons, method = "wilcox.test")
+```
+
+3.  **Make things visually clearer by adding the significance levels
+    instead of the raw numbers** by adjusting the `label` parameter:
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova", label.y = 10) +  stat_compare_means(comparisons = my_comparisons, method = "wilcox.test", label = "p.signif")
+```
+
+Those are just some of the ways that we can adjust our plots! *We will
+talk way more about the underlying calculations and how significance
+levels are calculated in the next session.*
+
+## ggprism package
+
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+is arguably the most useful (even according to the authors) part of this
+package. It is the main tool which is used make ggplots look like they
+were made in GraphPad Prism. *There is also a lot of customization you
+can do with the following, all using ggplot-like code.*
+
+-   [Color, fill, and shape
+    palettes](https://csdaw.github.io/ggprism/articles/colours.html)
+
+-   [Changing Axes](https://csdaw.github.io/ggprism/articles/axes.html)
+
+-   [Adding
+    p-values](https://csdaw.github.io/ggprism/articles/pvalues.html)
+
+We will go through some of the options associated with the
+`theme_prism()` function. For a change of pace, let's go use the
+scatterplot we worked with before:
+
+```{r}
+#| warning: false
+scatterp <- ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) + geom_point()
+scatterp
+```
+
+Then we’ll apply
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+and see how it looks just with the default settings. By default the:
+
+-   Fontface for all text is bold except the legend text
+
+-   Font size is 14 pt
+
+-   Legend title is hidden (by setting `legend.title = element_blank()`)
+
+-   Background is white and all text and lines are black
+
+-   Default palette is `"black_and_white"`
+
+```{r}
+#| warning: false
+scatterp + theme_prism()
+```
+
+You can easily bring back the legend title by overriding the
+`legend.title` element from inside the `theme()` . Note that this is the
+same place that you can edit legend and title elements in regular
+`ggplot()`.
+
+```{r}
+#| warning: false
+scatterp + theme_prism() + theme(legend.title = element_text())
+```
+
+The overall theme text size is adjusted with the `base_size` argument,
+as with the standard ggplot2 themes such as
+[`theme_bw()`](https://ggplot2.tidyverse.org/reference/ggtheme.html).
+
+We can try adjusting it in the code cell below:
+
+```{r}
+#| warning: false
+scatterp + theme_prism(base_size = ) + theme(legend.title = element_text())
+```
+
+By default the `base_line_size` and `base_rect_size` arguments scales
+with the `base_size`, but again, these can be overridden.
+
+```{r}
+#| warning: false
+scatterp + theme_prism(base_size = 14, base_line_size = ) + theme(legend.title = element_text())
+```
+
+You can also change the `base_fontface` (e.g. bold, plain, italic) and
+`base_family` (crossplatform compatibility fonts e.g. serif, sans, mono,
+or specific fonts e.g. Arial).
+
+::: callout-note
+## Challenge 1: Adjusting fonts
+
+By looking at help functions and adding different arguments to
+`theme_prism()`, figure out how to change font families and
+:::
+
+## **Theme palettes**
+
+There are several different colour palettes that are built into
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html).
+
+```{r}
+names(ggprism_data$themes)
+```
+
+Try out some of these themes:
+
+```{r}
+#| warning: false
+scatterp + theme_prism(palette = ) + theme(legend.title = element_text())
+```
+
+You can preview a single palette using the
+[`preview_theme()`](https://csdaw.github.io/ggprism/reference/preview_theme.html)
+function. It shows a sample plot with the theme applied (as well as
+[`scale_colour_prism()`](https://csdaw.github.io/ggprism/reference/scale_colour_prism.html)
+and
+[`scale_fill_prism()`](https://csdaw.github.io/ggprism/reference/scale_fill_prism.html)).
+See [this
+page](https://csdaw.github.io/ggprism/articles/web-only/palettes.html)
+for images of all 43 available
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+palettes.
+
+```{r}
+preview_theme("flames")
+```
+
+It is good to try matching
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+palettes with their corresponding
+[`scale_colour_prism()`](https://csdaw.github.io/ggprism/reference/scale_colour_prism.html)
+and/or
+[`scale_fill_prism()`](https://csdaw.github.io/ggprism/reference/scale_fill_prism.html)
+palettes.
+
+```{r}
+scatterp + theme_prism(palette = "") + scale_color_prism(palette = "")
+```
+
+::: callout-note
+## Realistic Example
+
+If you want to see more complex adjustments you can make, check out
+the`ggprism()` guide, including this [really cool real-life
+example](https://csdaw.github.io/ggprism/articles/web-only/ex2-wings.html),
+re-creating a plot from a paper originally created in GraphPad Prism 7.
+You should now have the skills necessary to follow along!
+:::
+
+::: callout-note
+## Takeaways
+
+-   Packages exist to extend the functionality of `ggplot2` even further
+
+-   They use very similar, if not identical, syntax as the ggplot2
+    package, so learning that first will provide a good basis for more
+    customization
+:::
