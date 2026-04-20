@@ -35,7 +35,7 @@ sample mean expression data and the age in days of the mice.
 new_metadata <- read.csv("https://github.com/esallychang/prism2r-session3-dataviz/raw/refs/heads/main/data/new_metadata.csv", row.names = 1)
 ```
 
-### Tidy data 
+### Tidy data
 
 Once you have the data loaded, please check out the structure using any
 commands from Base R or Tidyverse that we already know about:

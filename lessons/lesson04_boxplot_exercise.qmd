@@ -17,6 +17,10 @@ package contains data from the [Portal
 Project](https://github.com/weecology/PortalData), which is a long-term
 dataset from Portal, Arizona, in the Chihuahuan desert.
 
+```{r}
+new_metadata <- read.csv("https://github.com/esallychang/prism2r-session3-dataviz/raw/refs/heads/main/data/portal_project.csv")
+```
+
 To actually take a look at the data, we can use the `View()` function to
 open an interactive viewer, which behaves like a simplified version of a
 spreadsheet program. It’s a handy function, but somewhat limited when
@@ -193,7 +197,7 @@ ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length, fi
   scale_x_discrete(labels = label_wrap_gen(width = 10))
 ```
 
-### Adding geoms: 
+### Adding geoms:
 
 While boxplots can be very useful for summarizing data, it is often
 helpful to show the raw data as well. With **`ggplot`**, we can easily
@@ -235,7 +239,7 @@ ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_jitter(alpha = 0.2)
 ```
 
-### Global mapping vs. Geom Mapping: 
+### Global mapping vs. Geom Mapping:
 
 Just as before, we can map `plot_type` to `color` by putting it inside
 `aes()`.

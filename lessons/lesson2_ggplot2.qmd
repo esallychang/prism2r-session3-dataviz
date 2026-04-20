@@ -519,17 +519,17 @@ iteratively to test your code in the code blocks below:
 
 ```{r}
 # Step 1: Create a boxplot where the x-axis is the genotype and the y-axis are the samplemeans
-ggplot(data = _______, aes(x = ______, y = _______)) + geom_boxplot()
+ggplot(data = new_metadata, aes(x = genotype, y = samplemeans)) + geom_boxplot()
 ```
 
 ```{r}
 # Step 2: Use fill aesthetic to color by celltype
-
+ggplot(data = new_metadata, aes(x = genotype, y = samplemeans, fill = celltype)) + geom_boxplot()
 ```
 
 ```{r}
 # Step 3:  Add a title to your plot using ggtitle()
-
+ggplot(data = new_metadata, aes(x = genotype, y = samplemeans, fill = celltype)) + geom_boxplot() + ggtitle("")
 ```
 
 ```{r}
