@@ -9,6 +9,8 @@ editor_options:
     wrap: 72
 ---
 
+# Plotting in Base R
+
 ## About our Data Set
 
 ### **The dataset**
@@ -27,9 +29,26 @@ sample. Each sample is classified in one of two categories: Wt (wild
 type) or KO (knockout). We also have some additional information about
 sample mean expression data and the age in days of the mice.
 
+**Today we will can read this data in directly from a URL:**
+
+```{r}
+new_metadata <- read.csv("https://github.com/esallychang/prism2r-session3-dataviz/raw/refs/heads/main/data/new_metadata.csv", row.names = 1)
+```
+
+### Tidy data 
+
+Once you have the data loaded, please check out the structure using any
+commands from Base R or Tidyverse that we already know about:
+
 ```{r}
 
 ```
+
+One thing you should notice is that the data is in "tidy" format, with
+each row representing an observation and each column representing a
+variable. **This is exactly the format that plotting functions in R
+expect and** means the table can be used to generate almost any plot
+type without further rearrangements.
 
 ## Plots in base R
 
@@ -62,11 +81,6 @@ dev.off()
 ```
 
 ### Scatterplot
-
-::: callout-note
-**Add callout here about plotting panel versus rendering it in the
-markdown document**
-:::
 
 For some hands-on practice we are going to use `plot` to draw a scatter
 plot and obtain a graphical view of the relationship between two sets of
