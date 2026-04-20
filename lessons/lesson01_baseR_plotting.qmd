@@ -192,16 +192,6 @@ legend("topleft",
        title="Celltype")
 ```
 
-::: callout-tip
-# Exercise 1
-
-1.  Change the color scheme in the scatterplot, such that it reflects
-    the `genotype` of samples rather than `celltype`.
-
-2.  Use R help to find out how to increase the size of the text on the
-    axis labels.
-:::
-
 ::: {.callout-note collapse="TRUE"}
 # Other Types of Plots in Base R
 
@@ -275,4 +265,271 @@ example, we can compare the sample means across celltypes 'typeA' and
 boxplot(samplemeans~celltype,
         data=new_metadata)
 ```
+:::
+
+# Fundamentals of ggplot
+
+## What is ggplot and why are we learning it?
+
+**`ggplot2`** is a plotting package that provides helpful commands to
+create complex plots from data in a data frame. It provides a more
+programmatic interface for specifying what variables to plot, how they
+are displayed, and general visual properties. Therefore, we only need
+minimal changes if the underlying data change or if we decide to change
+from a bar plot to a scatter plot. This helps in creating publication
+quality plots with minimal amounts of adjustments and tweaking.
+
+**`ggplot2`** refers to the name of the package itself. When using the
+package we use the function **`ggplot()`** to generate the plots, and so
+references to using the function will be referred to as **`ggplot()`**
+and the package as a whole as **`ggplot2`**
+
+**`ggplot2`** plots work best with data in the ‘long’ format, i.e., a
+column for every variable, and a row for every observation.
+Well-structured data will save you lots of time when making figures with
+**`ggplot2`**
+
+ggplot graphics are built layer by layer by adding new elements. Adding
+layers in this fashion allows for extensive flexibility and
+customization of plots.
+
+## The ggplot formula:
+
+To build a ggplot, we will use the following basic template that can be
+used for different types of plots:
+
+```         
+ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()) 
+```
+
+**Basically, we need to tell ggplot2():**
+
+-   What dataset to be looking at
+
+-   How to map this data to a plot (for example, what columns are we
+    plotting on the axes?)
+
+-   What geometry we should use to represent the actual data (points?
+    lines? bars?)
+
+-   By adding more statements you can add more customization to your
+    plot!
+
+## Motivation:
+
+Today we will go through creating and customizing a few typical plots so
+you can get a handle on the `ggplot2()` syntax. Once you are feeling
+comfortable with these fundamentals, you will be able to branch out and
+learn how to re-create really specific GraphPad Prism plots and get
+inspired by what you see in publications.
+
+**Here are some sources of inspiration:**
+
+-   [R Graph Gallery](https://r-graph-gallery.com/ggplot2-package.html)
+
+-   [Re-creating specific barplot in
+    R](https://www.rpubs.com/artur_matysik/graphpad_01)
+
+-   [ggPrism ggplot
+    extension](https://csdaw.github.io/ggprism/articles/web-only/ex1-dose.html)
+    examples
+
+## What are our goals for today?
+
+-   Explain the syntax of ggplot2
+-   Apply ggplot2 package to visualize data
+-   Save customizations as scripts and functions
+-   Create and customize boxplots using ggplot2()
+-   **Get you to the point where you could follow some of the cool
+    tutorials above!**
+
+## Building plots with `ggplot2`
+
+Let's start by loading the `ggplot2` library:
+
+```{r}
+#| label: load_ggplot2
+# Load the ggplot2 library
+library(ggplot2)
+```
+
+The `ggplot()` function is used to **initialize the basic graph
+structure**, then we add to it. The basic idea is that you specify
+different parts of the plot using additional functions one after the
+other and combine them into a "code chunk" using the `+` operator; the
+functions in the resulting code chunk are called layers.
+
+Let's start:
+
+```{r}
+#| label: ggplot_df
+#| eval: false
+# What happens when we just provide ggplot with the dataframe?
+ggplot(new_metadata) 
+```
+
+You get a blank plot, because you need to **specify additional
+information to the** ggplot() command. Let's start by adding those
+aesthetics such as which variables are going to be mapping to which:
+
+```{r}
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) 
+```
+
+**What do you notice about this plot now? What have we added and what is
+still missing?**
+
+"Aesthetics" are set with the aes() function and can be set either
+nested within `ggplot()` (applies to the whole plot) or within
+`geom_point()` (applies only to that layer).
+
+The `aes()` function has many different arguments, and all of those
+arguments take columns from the original data frame as input. It can be
+used to specify many plot elements including the following:
+
+-   position (i.e., on the x and y axes)
+-   color ("outside" color)
+-   fill ("inside" color)
+-   shape (of points)
+-   linetype
+-   size
+
+To start, we specified x- and y-axis since `geom_point` requires the
+most basic information about a scatterplot, i.e. what you want to plot
+on the x and y axes. All of the other plot elements mentioned above are
+optional.
+
+### Adding the data via a geometric object!
+
+The **geom (geometric) object** is the layer that specifies what kind of
+plot we want to draw. A plot **must have at least one `geom`**; there is
+no upper limit. Examples include:
+
+-   points (`geom_point`, `geom_jitter` for scatter plots, dot plots,
+    etc)
+-   lines (`geom_line`, for time series, trend lines, etc)
+-   boxplot (`geom_boxplot`, for, well, boxplots!)
+
+Let's add a "geom" layer to our plot using the `+` operator, and since
+we want a scatter plot so we will use `geom_point()`.
+
+```{r}
+#| label: geom_point_df
+#| eval: false
+# Now we provide ggplot with the data frame and the type of geom object that we want for our plot
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + geom_point() 
+```
+
+Now that we have the required aesthetics, let's add some extras like
+color to the plot. We can **`color` the points on the plot based on the
+genotype column** within `aes()`. You will notice that there are a
+default set of colors that will be used so we do not have to specify.
+
+Note that the legend has been conveniently plotted for us and that this
+call of the `aes` function is *inside* of `geom_point` as these are
+options specific to the mapping of the data to the geometric object.
+
+```{r}
+#| label: add_color_column
+# Adding color to our figure based upon the genotype
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + geom_point(aes(color = genotype)) 
+```
+
+Let's try to have both **celltype and genotype represented on the
+plot**. To do this we can assign the `shape` argument in `aes()` to the
+celltype column, so that each celltype is plotted with a different
+shaped data point.
+
+```{r}
+#| label: add_shape_column
+# Adding different shapes to our data based upon the celltype
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype)) 
+```
+
+## Iteratively Making Improvements to a Graph
+
+This is a totally useable graph at this point, but if you are like me,
+you might immediately notice some improvements that could be made!
+
+The data points are quite small. We can adjust the **size of the data
+points** within the `geom_point()` layer since it applies to those
+points, but it should **not be within `aes()`** since we are not mapping
+it to a column in the input data frame, instead we are just specifying a
+number.
+
+```{r}
+#| label: increase_size
+# Increase the size of the points
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) 
+
+```
+
+### Theme Layers
+
+The labels on the x- and y-axis are also quite small and hard to read.
+To change their size, we need to add an additional **theme layer**. The
+ggplot2 `theme` system handles non-data plot elements such as:
+
+-   Axis label aesthetics
+-   Plot background
+-   Facet label backround
+-   Legend appearance
+
+There are built-in themes we can use (i.e. `theme_bw()`) that mostly
+change the background/foreground colours, by adding it as additional
+layer. Or we can adjust specific elements of the current default theme
+by adding the `theme()` layer and passing in arguments for the things we
+wish to change. Or we can use both.
+
+Let's add a layer using `theme_bw()`.
+
+```{r}
+#| label: add_pre_built_theme
+# Adding in a built-in theme
+
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) +
+  theme_bw()
+
+```
+
+**Do the axis labels or the tick labels get any larger by changing
+themes?** No, they don't. But, we can add arguments using `theme()` to
+change the size of axis labels ourselves. Since we will be adding this
+layer "on top", or after `theme_bw()`, any features we change will
+override what is set by the `theme_bw()` layer.
+
+Let's **increase the size of both the axes titles to be 1.5 times the
+default size.** When modifying the size of text the `rel()` function is
+commonly used to specify a change relative to the default.
+
+```{r}
+#| label: increase_axis_titles_size
+# Increasing the size of the axes titles
+
+ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans)) + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25) +
+  theme_bw() + 
+  theme(axis.title = element_text(size=rel(1.5)))	
+```
+
+You can use the `example("geom_point")` function here to explore a
+multitude of different aesthetics and layers that can be added to your
+plot. As you scroll through the different plots, take note of how the
+code is modified. You can use this with any of the different geometric
+object layers available in ggplot2 to learn how you can easily modify
+your plots!
+
+::: callout-note
+## ggplot resources
+
+RStudio provide this very [helpful
+cheatsheet](https://rstudio.github.io/cheatsheets/data-visualization.pdf)
+for plotting using `ggplot2`. Different example plots are provided and
+the associated code (i.e which `geom` or `theme` to use in the
+appropriate situation.) We also encourage you to peruse through this
+useful [online reference](https://ggplot2.tidyverse.org/reference/) for
+working with ggplot2.
 :::
