@@ -558,3 +558,294 @@ the political blog 538 or the Wall Street Journal!
     -   How many theme() layers can be added to a ggplot code chunk, in
         your estimation?
 :::
+
+# Saving your work and reproducibility
+
+### Saving a ggplot() object
+
+Helpfully, you can actually assign a plot to a variable. This is super
+useful when you want to specify a base set of axes and/or a `geom` and
+then try out lots of themes or color schemes without a bunch of
+re-typing.
+
+For example, we can save the base plot with its axes as `age_vs_means` :
+
+```{r}
+age_vs_means <- ggplot(data = new_metadata, aes(x = age_in_days, y = samplemeans))
+```
+
+Then, we can use this stored object immediately and use the `+` operator
+to add points:
+
+```{r}
+age_vs_means_geom <- age_vs_means + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25)
+```
+
+See what `age_vs_means_geom` now contains by referring to by name:
+
+```{r}
+age_vs_means_geom
+```
+
+Then, you can use this to add themes or other layers iteratively without
+retyping everything that went into `age_vs_means_geom`:
+
+```{r}
+# Try adding a new theme to age_vs_means_geom. Dont forget the plus sign operator! 
+
+```
+
+### Exporting figures to file
+
+Once you've made a plot using `ggplot()` you are happy with, there are
+two ways in which figures and plots can be output to a file (rather than
+simply displaying on screen).
+
+1.  The first (and easiest) is to export directly from the RStudio
+    'Plots' panel, by clicking on `Export` when the image is plotted.
+    This will give you the option of `png` or `pdf` and selecting the
+    directory to which you wish to save it to. It will also give you
+    options to dictate the size and resolution of the output image.
+
+2.  The second option is to use R functions and have the write to file
+    hard-coded in to your script. This would allow you to run the script
+    from start to finish and automate the process (not requiring human
+    point-and-click actions to save). In R’s terminology, **output is
+    directed to a particular output device and that dictates the output
+    format that will be produced**. If we wanted to save our scatterplot
+    to a pdf file format we can use a function called `ggsave` within
+    `ggplot2` to help us.
+
+```{r}
+#| label: ggsave_example
+#| eval: false
+# Create a plot
+age_vs_means + 
+  geom_point(aes(color = genotype, shape=celltype), size=2.25)
+
+# Use ggsave to save the plot
+ggsave("scatterplot.pdf")
+```
+
+You can specify the file format you would like it to print to with the
+`device` argument, and modify the file path to save this image somewhere
+else. However, `ggsave` will try to guess your preferred format from the
+extension that you provide in your file name.
+
+Check out `ggsave()` to look at other aspects of the saved plot you can
+modify!
+
+## Consistent formatting using custom functions
+
+When publishing or ensuring consistent formatting across a lab group, it
+can be helpful to ensure all plots have similar formatting. To do this
+we can create a custom function with our preferences for the theme.
+**This is also a friendly intro to creating your own functions.**
+
+As a reminder from Session 1:
+
+``` r
+# DO NOT RUN
+name_of_function <- function(arguments) {
+    statements or code that does something
+}
+```
+
+Now, let’s suppose we always wanted our theme to include the following
+for a particular set of graphs:
+
+``` r
+# DO NOT RUN
+# Themes we will like to include. Check out how we are building multiple themes on top of one another. 
+theme_bw() +
+theme(axis.title=element_text(size=rel(1.5))) +
+theme(plot.title=element_text(size=rel(1.5), hjust=0.5))
+```
+
+If there is nothing that we want to change when we run this, then we do
+not need to specify any arguments. Creating the function is simple; we
+can just put the code inside the `{}` of an otherwise empty function
+called `personal_theme()`:
+
+```{r}
+# Create personal theme function for figures
+# Look, there is now a new part of our environment called function containing this function!
+personal_theme <- function(){
+  theme_bw() +
+  theme(axis.title=element_text(size=rel(1.5))) +
+  theme(plot.title=element_text(size=rel(1.5), hjust=0.5))
+}
+```
+
+Now to run our personal theme with any plot, we can use this function in
+place of the lines of `theme()` code:
+
+```{r}
+# Apply personal theme to figure
+ggplot(new_metadata) +
+  geom_point(aes(x=age_in_days, y=samplemeans, color=genotype, shape=celltype), size=rel(3.0)) +
+  xlab("Age (days)") +
+  ylab("Mean expression") +
+  ggtitle("Expression with Age") +
+  personal_theme()
+```
+
+::: callout-note
+## Exercise 2
+
+Create another custom function called `linedraw_theme()` that applies
+the `linedraw` theme to a plot and changes the legend position to the
+top of the plot.
+
+Then, apply it to `age_vs_means_geom` (or another plot you've created)
+to test whether it works!
+:::
+
+```{r}
+# Write your custom theme function here 
+
+
+```
+
+```{r}
+# Apply it to a plot here 
+
+
+```
+
+::: callout-note
+## Word of Warning
+
+Saving ggplot() objects is great, and saving commonly used combinations
+of parameters in functions is super useful, but don't forget to save the
+code behind those plots and functions in an actual Markdown document or
+R script as you work! **For example, if I didn't actually save the code
+behind `personal_theme()` , it would NOT be saved anywhere outside of
+this project and I couldn't share it with anyone.**
+:::
+
+## Brief Boxplot Example
+
+A boxplot provides a graphical view of the distribution of data based on
+a five number summary:
+
+-   The top and bottom of the box represent the (1) first and (2) third
+    quartiles (25th and 75th percentiles, respectively).
+-   The line inside the box represents the (3) median (50th percentile).
+-   The whiskers extending above and below the box represent the (4)
+    maximum, and (5) minimum of a data set.
+-   The whiskers of the plot reach the minimum and maximum values that
+    are not outliers.
+
+In this case, **outliers** are determined using the interquartile range
+(IQR), which is defined as: Q3 - Q1. Any values that exceeds 1.5 x IQR
+below Q1 or above Q3 are considered outliers and are represented as
+points above or below the whiskers.
+
+### Putting together a boxplot in ggplot()
+
+In this exercise you will build on what you learned about ggplot()
+syntax in the previous scatterplot exercises to create a custom boxplot.
+I promise you can do this with the skills you have now!
+
+**Exercise 3:**
+
+Generate a boxplot using the data in the `new_metadata` dataframe.
+Create a ggplot2 code chunk with the following instructions, building
+iteratively to test your code in the code blocks below:
+
+1.  Use the `ggplot()` and `geom_boxplot()` layers to plot the
+    differences in sample means between the Wt and KO genotypes. I've
+    started this for you in the first code cell below!
+
+2.  Use the `fill` *aesthetic* inside our geom to look at differences in
+    sample means between the celltypes within each genotype.
+
+3.  Add a title to your plot using `ggtitle()`
+
+4.  Add labels, “Genotype” for the x-axis and “Mean expression” for the
+    y-axis.
+
+5.  Make the following `theme()` changes. Hint: You may need to use help
+    functions to look at theme() options.
+
+    -   Use the `theme_bw()` function to make the background white.
+
+    -   Change the size of your axes labels to 1.25x larger than the
+        default.
+
+    -   Change the size of your plot title to 1.5x larger than default.
+
+    -   Center the plot title.
+
+```{r}
+# Step 1: Create a boxplot where the x-axis is the genotype and the y-axis are the samplemeans
+ggplot(data = _______, aes(x = ______, y = _______)) + geom_boxplot()
+```
+
+```{r}
+# Step 2: Use fill aesthetic to color by celltype
+
+
+```
+
+```{r}
+# Step 3:  Add a title to your plot using ggtitle()
+
+```
+
+```{r}
+# Step 4: Add labels, “Genotype” for the x-axis and “Mean expression” for the y-axis.
+
+
+```
+
+```{r}
+# Step 5: Make the suggested theme() changes
+
+
+```
+
+### Changing the order of boxes in your boxplot()
+
+Let’s say you wanted to have the “Wt” boxplots displayed first on the
+left side, and “KO” on the right. How might you go about doing this?
+
+To do this, your first question should be - *How does ggplot2 determine
+what to place where on the X-axis?*
+
+-   The order of the genotype on the X axis is in alphabetical order.
+
+-   To change it, you need to make sure that the genotype column is a
+    factor
+
+-   And, the levels listed in the factor for that column are in the
+    order you want on the x-axis
+
+Here is what it looks like to convert the genotype column of the
+new_metadata
+
+```{r}
+# Factor genotype
+new_metadata$genotype <- factor(new_metadata$genotype, c("Wt", "KO"))
+```
+
+```{r}
+base_boxplot <- YOUR CODE FROM ABOVE
+```
+
+### **Adding additional geoms to visualize raw data**
+
+One of the most powerful aspects of **`ggplot`** is the way we can add
+components to a plot in successive layers. While boxplots can be very
+useful for summarizing data, it is often helpful to show the raw data as
+well. With **`ggplot`**, we can easily add another `geom_` to our plot
+to show the raw data.
+
+Let’s add `geom_point()` to visualize the raw data in the code cell
+below.
+
+```{r}
+
+```
