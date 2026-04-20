@@ -18,7 +18,7 @@ Project](https://github.com/weecology/PortalData), which is a long-term
 dataset from Portal, Arizona, in the Chihuahuan desert.
 
 ```{r}
-new_metadata <- read.csv("https://github.com/esallychang/prism2r-session3-dataviz/raw/refs/heads/main/data/portal_project.csv")
+ratdat <- read.csv("https://github.com/esallychang/prism2r-session3-dataviz/raw/refs/heads/main/data/portal_project.csv")
 ```
 
 To actually take a look at the data, we can use the `View()` function to
@@ -32,7 +32,7 @@ examine the **str**ucture of the data.
 **Let's quickly make a scatterplot:**
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length)) +
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length)) +
   geom_point()
 ```
 
@@ -43,7 +43,12 @@ You may notice a warning that missing values were removed. If a variable
 necessary to make the plot is missing from a given row of data (in this
 case, `hindfoot_length` or `weight`), it can’t be plotted. `ggplot2`
 just uses a warning message to let us know that some rows couldn’t be
-plotted.
+plotted.\
+\
+Because we will get tired of seeing this message, I have adjusted the
+behavior of the rest of the plotting cells to not output these warnings!
+This can be done by adding `#| warning: false` to the top of each code
+cell.
 :::
 
 ## **Changing aesthetics**
@@ -55,14 +60,17 @@ difficult to see all the data. We can adjust the transparency of the
 points using the `alpha` argument, which takes a value between 0 and 1:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length)) +
+#| warning: false
+# Adjusting the transparency of the points
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length)) +
   geom_point(alpha = 0.2)
 ```
 
 We can also change the color of the points:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length)) +
   geom_point(alpha = 0.2, color = "blue")
 ```
 
@@ -75,12 +83,13 @@ nothing to do with making graphs). Since we’re now mapping a variable
 put the argument inside `aes()`:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
   geom_point(alpha = 0.2)
 ```
 
 ::: callout-note
-## Challenge 1: Modifying plots
+## Exercise 1 : Modifying plots
 
 1.  Try modifying the plot so that the `shape` of the point varies by
     `sex`. You will set the `shape` the same way you set the `color`.
@@ -91,6 +100,14 @@ Do you think this is a good way to represent `sex` with these data?
     `year`. Do you notice a difference in the color scale compared to
     changing color by plot type? Why do you think this happened?
 :::
+
+```{r}
+#  Work on modifying plots here
+#| warning: false
+
+
+
+```
 
 ## **Changing scales**
 
@@ -105,7 +122,8 @@ We can change scales by adding `scale_` functions to our plots.
 [viridis](https://r-graph-gallery.com/package/viridis.html) package.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
   geom_point(alpha = 0.2) +
   scale_color_viridis_d()
 ```
@@ -117,7 +135,8 @@ way that `weight` is mapped to the `x` axis by using the
 `scale_x_log10()` function:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) +
   geom_point(alpha = 0.2) +
   scale_x_log10()
 ```
@@ -134,18 +153,20 @@ axis, we can fit a simple relationship to the data by adding another
 layer, `geom_smooth()`.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = weight, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length)) +
   geom_point(alpha = 0.2) +
   scale_x_log10() + geom_smooth()
 ```
 
 ::: callout-note
-## Challenge 2: geom_smooth() help
+## Exercise 2: geom_smooth() help
 
 1.  Take a look at the help for the `geom_smooth()` function to figure
-    out what model is used by default to fit a relationship between the
-    two variables
-2.  Edit the command above to use a linear model to fit the relationship
+    out it decides what model to use. Why do you think the function
+    chose the listed method?
+2.  Edit the command above to use a linear model to fit the
+    relationship. How did this change the resulting plot?
 :::
 
 ## **Customizing a Boxplot**
@@ -155,7 +176,7 @@ and `hindfoot_length` on the y axis. As a reminder, we can do this by
 adding `geom_boxplot()`:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_boxplot()
 ```
 
@@ -165,7 +186,8 @@ Just as we colored the points before, we can color our boxplot by
 `plot_type` as well:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length, color = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length, color = plot_type)) +
   geom_boxplot()
 ```
 
@@ -175,7 +197,8 @@ the rectangular portions. This is because the `color` only impacts
 of 2-dimensional parts of a plot, we use `fill`:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length, fill = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length, fill = plot_type)) +
   geom_boxplot()
 ```
 
@@ -192,7 +215,8 @@ axis, and we modify the `labels` argument. The function
 legible.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length, fill = plot_type)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length, fill = plot_type)) +
   geom_boxplot() +
   scale_x_discrete(labels = label_wrap_gen(width = 10))
 ```
@@ -207,7 +231,8 @@ Let’s add `geom_point()` to visualize the raw data. We will modify the
 `alpha` argument to help with overplotting.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_boxplot() +
   geom_point(alpha = 0.2)
 ```
@@ -220,7 +245,9 @@ We can shift to using `geom_jitter()`, which will add points with a bit
 of random noise added to the positions to prevent this from happening.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_boxplot() +
   geom_jitter(alpha = 0.2)
 ```
@@ -234,7 +261,9 @@ setting the `outlier.shape` argument to `NA`, which means the outliers
 don’t have a shape to be plotted.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.2)
 ```
@@ -245,9 +274,10 @@ Just as before, we can map `plot_type` to `color` by putting it inside
 `aes()`.
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length, color = plot_type)) +
   geom_boxplot(outlier.shape = NA) +
-  geom_jitter(aes(color = plot_type), alpha = 0.2)
+  geom_jitter(alpha = 0.2)
 ```
 
 Notice that both the color of the points and the color of the boxplot
@@ -258,7 +288,8 @@ If we want to limit the mapping to a single `geom`, we can put the
 mapping into the specific `geom_` function, like this:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(aes(color = plot_type), alpha = 0.2)
 ```
@@ -271,7 +302,8 @@ means the points are plotted on top of the boxes. To put the boxplots on
 top, we switch the order of the layers:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_jitter(aes(color = plot_type), alpha = 0.2) +
   geom_boxplot(outlier.shape = NA)
 ```
@@ -282,22 +314,24 @@ remove the `fill` from the boxplots altogether, leaving only the black
 lines. To do this, we set `fill` to `NA`:
 
 ```{r}
-ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+#| warning: false
+
+ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_jitter(aes(color = plot_type), alpha = 0.2) +
   geom_boxplot(outlier.shape = NA, fill = NA)
 ```
 
 ::: callout-note
-## Challenge 3: Change geoms
+## Exercise 3: Change geoms
 
 1.  Violin plots are similar to boxplots- try making one using
     `plot_type` and `hindfoot_length` as the x and y variables. Remember
     that all geom functions start with `geom_`, followed by the type of
     geom.
-2.  For an *extra challenge*, , make the color of the points and
-    outlines of the violins vary by `plot_type`, and set the fill of the
-    violins to white. Try playing with the order of the layers to see
-    what looks best.
+2.  For an *extra challenge*, make the color of the points and outlines
+    of the violins vary by `plot_type`, and set the fill of the violins
+    to white. Try playing with the order of the layers to see what looks
+    best.
 :::
 
 ## Adding Labels and Modifying Themes
@@ -310,7 +344,8 @@ At this point, we are pretty happy with the basic layout of our plot, so
 let's **assign** it to a plot to a named **object**.
 
 ```{r}
-myplot <- ggplot(data = complete_old, mapping = aes(x = plot_type, y = hindfoot_length)) +
+
+myplot <- ggplot(data = ratdat, mapping = aes(x = plot_type, y = hindfoot_length)) +
   geom_jitter(aes(color = plot_type), alpha = 0.2) +
   geom_boxplot(outlier.shape = NA, fill = NA)
 
@@ -320,6 +355,7 @@ We can change the overall appearance using `theme_` functions. Let’s try
 a black-and-white theme by adding `theme_bw()` to our plot:
 
 ```{r}
+#| warning: false
 myplot + theme_bw()
 ```
 
@@ -333,6 +369,7 @@ can do this by specifying that the `axis.title` should be an
 `element_text()` with `size` set to 14.
 
 ```{r}
+#| warning: false
 myplot +
   theme_bw() +
   theme(axis.title = element_text(size = 14))
@@ -344,6 +381,7 @@ To do this, inside `theme()`, we will change the `panel.grid.major.x` to
 an `element_blank()`.
 
 ```{r}
+#| warning: false
 myplot +
   theme_bw() +
   theme(axis.title = element_text(size = 14), 
@@ -391,6 +429,7 @@ axis titles nicer, and perhaps add a main title to the plot. We can do
 this using the `labs()` function:
 
 ```{r}
+#| warning: false
 myplot +
   theme_bw() +
   theme(axis.title = element_text(size = 14), 
@@ -406,7 +445,7 @@ of various legends using `labs()`. For example,
 legend to “Plot type”.
 
 ::: callout-note
-## Challenge 4: Customizing a plot
+## Exercise 4: Customizing a plot's fonts
 
 Modify the previous plot by adding a descriptive subtitle. Increase the
 font size of the plot title and make it bold.
@@ -431,6 +470,7 @@ out by `sex`. We also use `ncol` to specify that we want them arranged
 in a single column:
 
 ```{r}
+#| warning: false
 myplot +
   theme_bw() +
   theme(axis.title = element_text(size = 14), 
@@ -444,24 +484,32 @@ myplot +
 ```
 
 ::: callout-caution
-## Challenge 5: Faceting a Scatterplot
+## Exercise 5: Faceting a Scatterplot
 
 1.  Scroll back up to where we were making a scatterplot with the
-    `geom_smooth()` line. Modify this command to facet this plot by.
-    Adjust the number of rows and columns of the facet to make it
-    visually appealing.
+    `geom_smooth()` line. Modify this command to facet this plot by
+    `plot_type`. Adjust the number of rows and columns of the facet to
+    make it visually appealing.
 2.  Use `ggsave()` to save this as a file called
-    "rodent_size_plots.jpg". Hint: You will need to save the scatterplot
-    as an R object first.
+    "rodent_size_plots.jpg". Note: You will need to run the plotting
+    command outside of this document!
 :::
 
-::: callout-note
-## Challenge 6: Your Own Plot!
+```{r}
+# This is the starter scatterplot code
+#| warning: false
+ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point(alpha = 0.2) +
+  scale_x_log10() + geom_smooth()
+```
 
-Try making your own plot! You can run `str(complete_old)` or
-`?complete_old` to explore variables you might use in your new plot.
-Pick some that might be of the same type (or involve the same
-visualizations) as your
+::: callout-note
+## Exercise 6: Your Own Plot!
+
+Try making your own plot! You can run `str(ratdat)` or `?ratdat` to
+explore variables you might use in your new plot. Pick some that might
+be of the same type (or involve the same visualizations) as your own
+data might feature in the future.
 
 Here are a couple ideas to get you started:
 
@@ -472,3 +520,292 @@ Here are a couple ideas to get you started:
 If you feel bold, copy and paste or upload your plot into the shared
 class document so we can all check it out.
 :::
+
+# Extending ggplot() using other packages
+
+## Integrating statistical tests using ggpubr()
+
+The strength of `ggplot2` is also its weakness. Using a layered approach
+means that it can often take quite a bit of code to reach a publishable
+state, even for routine plots. For new users, it is additionally
+difficult to remember what elements are needed to adjust various plot
+features, as there are hundreds of functions in the `ggplot2` package.
+`ggpubr` is a package designed to address some of these problems. [The
+‘ggpubr’ package provides some easy-to-use functions for creating and
+customizing ‘ggplot2’- based publication ready
+plots](https://rpkgs.datanovia.com/ggpubr/).
+
+```{r}
+library("ggpubr")
+```
+
+`ggpubr` allows us to easily incorporate additional information into our
+plots (e.g., mean, individual case information, etc.). Where this
+package really shines is its ability to easily include the results of
+common statistical tests. **As we saw, base R has functions for
+calculating statistics, but then you would need to manually add them to
+your plot, which is way more annoying.**
+
+Here, I will give you a taste of how this package is useful for
+displaying the results of common statistical tests such as those used to
+compare means between groups. **We will cover this in much more detail
+in Session 4 on Statistical Analyses!**
+
+### Quick ANOVA
+
+Let's look at `myplot` again - what kind of statistical test are we
+going to run to compare the means of the plot types?
+
+```{r}
+#| warning: false
+myplot_cleaned <- myplot +
+  theme_bw() +
+  theme(axis.title = element_text(size = 14), 
+        legend.position = "none") +
+  labs(title = "Rodent size by plot type",
+       x = "Plot type",
+       y = "Hindfoot length (mm)")
+
+myplot_cleaned
+```
+
+Let's see if patient age significantly differed between the plot types
+using an Analysis of Variance test (ANOVA) - for now, we will assume our
+data meets the assumptions of this test. In the future, we will be using
+R functions to check whether this is indeed the case!
+
+The main function in `ggpubr` to compare means between two or more
+groups is
+[`compare_means()`](https://rpkgs.datanovia.com/ggpubr/reference/compare_means.html),
+which contains functionalities of t-test, ANOVA, and other options for
+comparing means.
+
+Let's try it out for our data:
+
+```{r}
+compare_means(hindfoot_length~plot_type,ratdat,method="anova")
+```
+
+Notice, this is not nearly as descriptive as using `aov()` (mentioned
+briefly in Session 2 and covered in more detail next time) and this can
+only perform a one-way ANOVA. However, it is a convenient function and
+plays nicely with `ggpubr` graphing options.
+
+While an ANOVA or Kruskal-Wallis can tell us there are significant
+differences between our groups, pairwise testing can then tell us which
+groups are different. With `compare_means()` we can use a T-test or
+Wilcoxon Rank Sum as a post-hoc for pairwise comparisons.
+
+### **Integrate these results into our visualizations**
+
+If we are just interested in quickly adding the p-value of our ANOVA to
+`myplot`, we can use `stat_compare_means()`. You do not need to run
+`compare_means()` prior to `stat_compare_means()`. Look how we can
+quickly add the overall result to our existing plot!
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova")
+```
+
+However, if we want to include multiple comparisons and report p-values
+adjusted for multiple comparisons, we can add an additional layer from
+`stat_pwc` (PWC = pairwise comparisons):
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova") +  stat_pwc( method = "wilcox_test", label = "p.adj.format")
+```
+
+This is a little chaotic, so we can try a few different things to make
+it less-so:
+
+1.  **Remove any non-significant tests:**
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova") +  stat_pwc( method = "wilcox_test", label = "p.adj.format", hide.ns = TRUE)
+```
+
+Well, that didn't do much since they are all significant!
+
+2.  **Select which comparisons to keep and adding them "manually":**
+
+    First, create a list of vectors of comparisons you actually want to
+    display (it will be helpful to look at the `pairwise` object). For
+    example, Control vs. Spectab exclosure and Control vs. Rodent
+    Exclosure:
+
+    ```{r}
+    my_comparisons <- list( c("Control", "Spectab exclosure"), c("Control", "Rodent Exclosure"))
+    ```
+
+    Second, apply this list using another layer of
+    `stat_compare_means()` , using the same test we used for calculating
+    the comparisons above:
+
+    ```{r}
+    #| warning: false
+    myplot_cleaned + stat_compare_means(method = "anova", label.y = 10) +  stat_compare_means(comparisons = my_comparisons, method = "wilcox.test")
+    ```
+
+3.  **Make things visually clearer by adding the significance levels
+    instead of the raw numbers** by adjusting the `label` parameter:
+
+```{r}
+#| warning: false
+myplot_cleaned + stat_compare_means(method = "anova", label.y = 10) +  stat_compare_means(comparisons = my_comparisons, method = "wilcox.test", label = "p.signif")
+```
+
+Those are just some of the ways that we can adjust our plots! *We will
+talk way more about the underlying calculations and how significance
+levels are calculated in the next session.*
+
+## ggprism package
+
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+is arguably the most useful (even according to the authors) part of this
+package. It is the main tool which is used make ggplots look like they
+were made in GraphPad Prism. *There is also a lot of customization you
+can do with the following, all using ggplot-like code.*
+
+-   [Color, fill, and shape
+    palettes](https://csdaw.github.io/ggprism/articles/colours.html)
+
+-   [Changing Axes](https://csdaw.github.io/ggprism/articles/axes.html)
+
+-   [Adding
+    p-values](https://csdaw.github.io/ggprism/articles/pvalues.html)
+
+We will go through some of the options associated with the
+`theme_prism()` function. For a change of pace, let's go use the
+scatterplot we worked with before:
+
+```{r}
+library(ggprism)
+```
+
+```{r}
+#| warning: false
+
+scatterp <- ggplot(data = ratdat, mapping = aes(x = weight, y = hindfoot_length, color = plot_type)) + geom_point()
+scatterp
+```
+
+Then we’ll apply
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+and see how it looks just with the default settings. By default the:
+
+-   Fontface for all text is bold except the legend text
+
+-   Font size is 14 pt
+
+-   Legend title is hidden (by setting `legend.title = element_blank()`)
+
+-   Background is white and all text and lines are black
+
+-   Default palette is `"black_and_white"`
+
+```{r}
+{r}
+#| warning: false
+scatterp + theme_prism()
+```
+
+You can easily bring back the legend title by overriding the
+`legend.title` element from inside the `theme()` . Note that this is the
+same place that you can edit legend and title elements in regular
+`ggplot()`.
+
+```{r}
+#| warning: false
+scatterp + theme_prism() + theme(legend.title = element_text())
+```
+
+The overall theme text size is adjusted with the `base_size` argument,
+as with the standard ggplot2 themes such as
+[`theme_bw()`](https://ggplot2.tidyverse.org/reference/ggtheme.html).
+
+We can try adjusting it in the code cell below:
+
+```{r}
+#| warning: false
+scatterp + theme_prism(base_size = ) + theme(legend.title = element_text())
+```
+
+By default the `base_line_size` and `base_rect_size` arguments scales
+with the `base_size`, but again, these can be overridden.
+
+```{r}
+#| warning: false
+scatterp + theme_prism(base_size = 14, base_line_size = ) + theme(legend.title = element_text())
+```
+
+You can also change the `base_fontface` (e.g. bold, plain, italic) and
+`base_family` (crossplatform compatibility fonts e.g. serif, sans, mono,
+or specific fonts e.g. Arial).
+
+## Challenge 1: Adjusting fonts
+
+By looking at help functions and adding different arguments to
+`theme_prism()`, figure out how to change font families and
+
+## **Theme palettes**
+
+There are several different colour palettes that are built into
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html).
+
+```{r}
+names(ggprism_data$themes)
+```
+
+Try out some of these themes:
+
+```{r}
+#| warning: false
+scatterp + theme_prism(palette = ) + theme(legend.title = element_text())
+```
+
+You can preview a single palette using the
+[`preview_theme()`](https://csdaw.github.io/ggprism/reference/preview_theme.html)
+function. It shows a sample plot with the theme applied (as well as
+[`scale_colour_prism()`](https://csdaw.github.io/ggprism/reference/scale_colour_prism.html)
+and
+[`scale_fill_prism()`](https://csdaw.github.io/ggprism/reference/scale_fill_prism.html)).
+See [this
+page](https://csdaw.github.io/ggprism/articles/web-only/palettes.html)
+for images of all 43 available
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+palettes.
+
+```{r}
+preview_theme("flames")
+```
+
+It is good to try matching
+[`theme_prism()`](https://csdaw.github.io/ggprism/reference/theme_prism.html)
+palettes with their corresponding
+[`scale_colour_prism()`](https://csdaw.github.io/ggprism/reference/scale_colour_prism.html)
+and/or
+[`scale_fill_prism()`](https://csdaw.github.io/ggprism/reference/scale_fill_prism.html)
+palettes.
+
+```{r}
+scatterp + theme_prism(palette = "") + scale_color_prism(palette = "")
+```
+
+## Realistic Example
+
+If you want to see more complex adjustments you can make, check out
+the`ggprism()` guide, including this [really cool real-life
+example](https://csdaw.github.io/ggprism/articles/web-only/ex2-wings.html),
+re-creating a plot from a paper originally created in GraphPad Prism 7.
+You should now have the skills necessary to follow along!
+
+## Takeaways
+
+-   Packages exist to extend the functionality of `ggplot2` even further
+
+-   They use very similar, if not identical, syntax as the ggplot2
+    package, so learning that first will provide a good basis for more
+    customization
